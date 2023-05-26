@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from models import *
+from schemas import User
 
 app = FastAPI()
 
@@ -10,4 +12,8 @@ async def root():
 
 @app.get("/hello/{name}")
 async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+    return {"message": f"Hello {name}"}\
+
+@app.get("/registration")
+async def registration(user: User):
+    return {"message": f"Hello {}"}
