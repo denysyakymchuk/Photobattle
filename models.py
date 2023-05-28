@@ -3,28 +3,6 @@ from sqlalchemy.orm import relationship
 
 from config import Base
 
-#
-# class User(Base):
-#     __tablename__ = "users"
-#
-#     id = Column(Integer, primary_key=True, index=True)
-#     email = Column(String, unique=True, index=True)
-#     hashed_password = Column(String)
-#     is_active = Column(Boolean, default=True)
-#
-#     items = relationship("Item", back_populates="owner")
-#
-#
-# class Item(Base):
-#     __tablename__ = "items"
-#
-#     id = Column(Integer, primary_key=True, index=True)
-#     title = Column(String, index=True)
-#     description = Column(String, index=True)
-#     owner_id = Column(Integer, ForeignKey("users.id"))
-#
-#     owner = relationship("User", back_populates="items")
-
 
 class User(Base):
     __tablename__ = "users"
@@ -41,7 +19,7 @@ class User(Base):
     block = Column(Boolean, default=False)
     delete_post_self = Column(Integer, default=0)
     delete_post_enemy = Column(Integer, default=0)
-    cards = relationship('Cards', back_populates='cards', foreign_keys='Cards.user_id',
+    cards = relationship('Cards', backref='cards', foreign_keys='Cards.user_id',
                             primaryjoin='User.id==Cards.user_id')
 
     def __repr__(self):
@@ -62,9 +40,9 @@ class Cards(Base):
     image = Column(String(130))
     nickname = Column(String(120))
     all_likes = Column(Integer, default=0)
-    battle_self = relationship('Battles', back_populates='_battle_self', foreign_keys='Battles.id_to_battle_self')
-    battle_enemy = relationship('Battles', back_populates='_battle_enemy', foreign_keys='Battles.id_to_battle_enemy')
-    user_id = Column(Integer, ForeignKey('user.id'))
+    battle_self = relationship('Battles', backref='_battle_self', foreign_keys='Battles.id_to_battle_self')
+    battle_enemy = relationship('Battles', backref='_battle_enemy', foreign_keys='Battles.id_to_battle_enemy')
+    user_id = Column(Integer, ForeignKey('users.id'))
     id_battle = Column(Integer, ForeignKey('battles.id_battles'))
 
 
