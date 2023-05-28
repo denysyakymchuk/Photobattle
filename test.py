@@ -1,4 +1,5 @@
 import requests
+from sqlalchemy import delete
 
 url = 'http://127.0.0.1:8000/'
 
@@ -9,4 +10,5 @@ j = {
     'gender': 'F'
 }
 
-a = requests.post(url + 'registration', json=j)
+a = requests.post(url + 'registration', json=j).json()
+print(a)
