@@ -1,6 +1,9 @@
+from fastapi import FastAPI
+from fastapi.security import HTTPBearer
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from starlette.middleware.sessions import SessionMiddleware
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./instance/photo.db"
 
@@ -13,4 +16,11 @@ SECRET_KEY = "20"
 ALGORITHM = "HS256"
 
 Base = declarative_base()
+
+app = FastAPI()
+security = HTTPBearer()
+
+Base.metadata.create_all(bind=engine)
+
+app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
 

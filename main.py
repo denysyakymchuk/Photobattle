@@ -1,30 +1,12 @@
-from datetime import timedelta
-
-from fastapi import FastAPI, Depends, HTTPException
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jwt import decode
+from fastapi import Depends
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
 import models
-from config import SessionLocal, engine, SECRET_KEY
-from gen_token import gen_token, signJWT
+from config import app
+from gen_token import gen_token, get_db
 from gmail_sender import Email
-from models import *
 from schemas import User
-
-app = FastAPI()
-security = HTTPBearer()
-
-Base.metadata.create_all(bind=engine)
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 @app.get("/")
@@ -70,8 +52,7 @@ def verification_gmail(key: str, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(user)
         print("jestem")
-
-        return signJWT(user.email)
+        return {"message": "Failed activation"}
     else:
         return {"message": "Failed activation"}
 
