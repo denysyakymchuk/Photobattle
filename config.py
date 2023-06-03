@@ -17,10 +17,9 @@ ALGORITHM = "HS256"
 
 Base = declarative_base()
 
-app = FastAPI()
+
 security = HTTPBearer()
 
 Base.metadata.create_all(bind=engine)
 
-app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
 

@@ -7,9 +7,6 @@ import jwt
 
 from config import SessionLocal
 
-JWT_SECRET = '52704f664e057ed33e984dd5c3f291c8'
-JWT_ALGORITH = 'HS256'
-
 
 def gen_token(username):
     unique = generate_password_hash(password=username + str(random.randint(1, 1000)), salt_length=12)
