@@ -2,7 +2,6 @@ import requests
 from sqlalchemy import delete
 
 url = 'http://127.0.0.1:8000/'
-url_login = 'http://127.0.0.1:8000/login'
 
 j = {
     'username': 'Denys',
@@ -11,10 +10,5 @@ j = {
     'gender': 'F'
 }
 
-j_login = {
-    'gmail': 'hromosoma235@gmail.com',
-    'password': 'q'
-}
-
-a = requests.post(url + 'login', json=j_login).text
+a = requests.post(url + 'registration', json=j).json()
 print(a)

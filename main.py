@@ -1,9 +1,10 @@
-from fastapi import Depends, FastAPI, Response, Request
+from fastapi import Depends, FastAPI, Response, Request, HTTPException
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from pydantic import BaseSettings
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
 from starlette.middleware.sessions import SessionMiddleware
-
-from session import Session
+from fastapi_jwt_auth import AuthJWT
 
 import models
 from gen_token import gen_token, get_db
@@ -11,35 +12,12 @@ from gmail_sender import Email
 from schemas import User
 
 app = FastAPI()
-app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
 
 
 @app.post("/")
 def set_cookie(response: Response):
     response.set_cookie(key="cookie_name", value="cookie_value")
     return {"message": "Cookie set!"}
-
-
-@app.post("/get_cookie")
-def get_cookie(request: Request, response: Response, cookies: str = None):
-    request = {"_user_id": 1, }
-    print(Session(**request).check_time_spam())
-    if cookies:
-        return {"message": "Cookie received!", "cookies": cookies}
-    else:
-        return {"message": "No cookie received!"}
-
-
-# @app.get("/")
-# async def root(response: Response, db: Session = Depends((get_db))):
-#
-#     response.set_cookie(key='lol', value='lololol')
-#
-#     mod = delete(models.User)
-#     db.execute(mod)
-#
-#     db.commit()
-#     return {"message": "Hello World"}
 
 
 @app.get("/hello/{name}")
@@ -85,21 +63,17 @@ def verification_gmail(key: str, db: Session = Depends(get_db)):
 
 
 @app.post("/login")
-def login(request: Request, db: Session = Depends(get_db)):
-    print(request.user)
-    gmail, password = ''
+def login(gmail: str, password: str, request: Request, credentials: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends(get_db)):
+
+    gmail = credentials.gmail
+    password = credentials.password
     print(gmail)
     print(password)
     user = db.query(models.User).filter(models.User.email == gmail).first()
 
     if user.password == password:
-        ch = Session().login_user(user.id)
-
-        if ch:
-            user.block = 1
-            return {'message': 'Account is block'}
-        else:
-            return True
+        access_token = AuthJWT.create_access_token(subject=gmail)
+        return {"access_token": access_token}
 
     else:
         return {'message': 'Email or password is not valid'}
