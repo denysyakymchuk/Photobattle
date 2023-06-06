@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from config import Base
 
 
-class User(Base):
+class User(SQLAlchemyBaseUserTableUUID, Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)

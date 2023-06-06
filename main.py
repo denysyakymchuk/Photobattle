@@ -63,17 +63,5 @@ def verification_gmail(key: str, db: Session = Depends(get_db)):
 
 
 @app.post("/login")
-def login(gmail: str, password: str, request: Request, credentials: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends(get_db)):
-
-    gmail = credentials.gmail
-    password = credentials.password
-    print(gmail)
-    print(password)
-    user = db.query(models.User).filter(models.User.email == gmail).first()
-
-    if user.password == password:
-        access_token = AuthJWT.create_access_token(subject=gmail)
-        return {"access_token": access_token}
-
-    else:
-        return {'message': 'Email or password is not valid'}
+def login(gmail: str, password: str, request: Request):
+    pass
